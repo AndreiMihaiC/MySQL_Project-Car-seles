@@ -269,4 +269,31 @@ SELECT e.employee_id, e.first_name, e.last_name, COUNT(b.branch_office_id)
 FROM employees e INNER JOIN branch_office b ON e.employee_id = b.manager_id 
 GROUP BY e.employee_id, e.first_name, e.last_name HAVING count(b.branch_office_id)>0;
 
+-- ------------------------------------------- SUBQUERIES:  -------------------------------------------------------------
+-- 1. WHERE:
+SELECT *
+FROM employees
+WHERE manager_id = (
+    SELECT employee_id
+    FROM employees
+    WHERE first_name = 'Andrei' AND last_name = 'Mihai'
+);
+
+-- 2. FROM:
+SELECT bo.branch_office_name, COUNT(e.employee_id) AS employee_count
+FROM branch_office bo
+JOIN (
+    SELECT branch_office_id, employee_id
+    FROM employees
+) AS e ON bo.branch_office_id = e.branch_office_id
+GROUP BY bo.branch_office_name;
+
+-- 3. SELECT:
+SELECT 
+    (SELECT CONCAT(first_name, ' ', last_name) FROM employees WHERE employee_id = bo.manager_id) AS manager_name,
+    COUNT(e.employee_id) AS employee_count
+FROM branch_office bo
+JOIN employees e ON bo.branch_office_id = e.branch_office_id
+GROUP BY bo.manager_id;
+
 DROP DATABASE Dacia;
