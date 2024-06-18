@@ -284,30 +284,68 @@ GROUP BY e.employee_id, e.first_name, e.last_name;
 SELECT e.employee_id, e.first_name, e.last_name, COUNT(b.branch_office_id) 
 FROM employees e INNER JOIN branch_office b ON e.employee_id = b.manager_id 
 GROUP BY e.employee_id, e.first_name, e.last_name HAVING count(b.branch_office_id)>0;
+ ```
 
+<li>Subqueries</li>
+
+<ol>
+<li>WHERE </li>
+<br>
+
+The subquery in the WHERE clause will return all records in the "employees" table where "manager_id" matches the "employee_code" of "Andrei Mihai".
+
+```
+SELECT *
+FROM employees
+WHERE manager_id = (
+    SELECT employee_id
+    FROM employees
+    WHERE first_name = 'Andrei' AND last_name = 'Mihai'
+);
 ```
 
 
-**Inserati aici toate instructiunile de SELECT pe care le-ati scris folosind filtrarile necesare astfel incat sa extrageti doar datele de care aveti nevoie**
-**Incercati sa acoperiti urmatoarele:**<br>
-**- where**<br>
-**- AND**<br>
-**- OR**<br>
-**- NOT**<br>
-**- like**<br>
-**- inner join**<br>
-**- left join**<br>
-**- OPTIONAL: right join**<br>
-**- OPTIONAL: cross join**<br>
-**- functii agregate**<br>
-**- group by**<br>
-**- having**<br>
-**- OPTIONAL DAR RECOMANDAT: Subqueries - nu au fost in scopul cursului. Puteti sa consultati tutorialul [asta](https://www.techonthenet.com/mysql/subqueries.php) si daca nu intelegeti ceva contactati fie trainerul, fie coordonatorul de grupa**<br>
+<li>FROM </li>
+<br>
 
+This query uses a subquery in the FROM clause to create a derived table ‘e’ that contains ‘branch_office_id’ and ‘employee_id’ from the ‘employees’ table. It then joins this derived table with the ‘branch_office’ table to count how many employees work at each branch office.
+
+```
+SELECT bo.branch_office_name, COUNT(e.employee_id) AS employee_count
+FROM branch_office bo
+JOIN (
+    SELECT branch_office_id, employee_id
+    FROM employees
+) AS e ON bo.branch_office_id = e.branch_office_id
+GROUP BY bo.branch_office_name;
+```
+
+<li>SELECT </li>
+<br>
+
+This query uses a subquery within the SELECT statement to retrieve the full name of each manager from the ‘employees’ table based on their ‘employee_id’. It then counts the number of employees managed by each manager by joining the ‘branch_office’ and ‘employees’ tables and grouping by ‘manager_id’.
+
+```
+SELECT 
+    (SELECT CONCAT(first_name, ' ', last_name) FROM employees WHERE employee_id = bo.manager_id) AS manager_name,
+    COUNT(e.employee_id) AS employee_count
+FROM branch_office bo
+JOIN employees e ON bo.branch_office_id = e.branch_office_id
+GROUP BY bo.manager_id;
+```
 </ol>
 
-<li>Conclusions</li>
+<h1>Conclusions</h1>
 
-**Inserati aici o concluzie cu privire la ceea ce ati lucrat, gen lucrurile pe care le-ati invatat, lessons learned, un rezumat asupra a ceea ce ati facut si orice alta informatie care vi se pare relevanta pentru o concluzie finala asupra a ceea ce ati lucrat**
+In this project, I observed the importance and applicability of each component that I used:
 
-</ol>
+<ul>
+	<li> DDL (Data Definition Language): I learned how to structure and model a database by creating tables and defining relationships between them, which is essential for any database management system.</li>
+	<li> DML (Data Manipulation Language): I acquired practical skills in data manipulation by inserting, updating, and deleting records, which will allow me to efficiently manage data within a database.</li>
+	<li> DQL (Data Query Language): I developed skills in querying data to extract valuable information, using commands such as SELECT, which is fundamental for data analysis.</li>
+	<li> Join: By using joins, I understood how to combine data from multiple tables, which is crucial for obtaining a complete perspective on interrelated data.</li>
+	<li> </li>Database Relationship: I explored the relationships between tables, which is vital for the integrity and coherence of data in a relational database.</li>
+	<li> Subqueries: I practiced using subqueries to perform complex queries, improving my ability to solve complex data problems. It was an excellent opportunity to learn how individual components of SQL language integrate to form complex data management systems.</li>
+</ul>
+
+
